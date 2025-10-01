@@ -128,13 +128,13 @@ export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDeta
 
       {/* Performance Chart */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Performance Timeline</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Performance Timeline</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={performanceData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip formatter={(value) => formatNumber(value as number)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="name" stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Bar dataKey="listens" fill="#0ea5e9" />
           </BarChart>
         </ResponsiveContainer>
@@ -162,13 +162,13 @@ export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDeta
       {/* Comparison with Nearby Episodes */}
       {comparisonData.length > 0 && (
         <div className="card">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">Comparison with Nearby Episodes</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Comparison with Nearby Episodes</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={comparisonData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip formatter={(value) => formatNumber(value as number)} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+              <XAxis dataKey="name" stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+              <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+              <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
               <Legend />
               <Line type="monotone" dataKey="allTime" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
               <Line type="monotone" dataKey="day7" stroke="#10b981" strokeWidth={2} name="Day 7" />
@@ -181,33 +181,33 @@ export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDeta
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="card">
           <div className="flex items-center space-x-3 mb-2">
-            <TrendingUp className="w-5 h-5 text-primary-600" />
-            <h4 className="font-semibold text-gray-700">vs Average</h4>
+            <TrendingUp className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300">vs Average</h4>
           </div>
-          <p className="text-3xl font-bold text-gray-800">
+          <p className="text-3xl font-bold text-gray-800 dark:text-gray-200">
             {((episode.allTime / avgAllTime - 1) * 100).toFixed(1)}%
           </p>
         </div>
         <div className="card">
           <div className="flex items-center space-x-3 mb-2">
-            <Award className="w-5 h-5 text-primary-600" />
-            <h4 className="font-semibold text-gray-700">Spotify</h4>
+            <Award className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300">Spotify</h4>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{formatNumber(episode.spotify)}</p>
+          <p className="text-3xl font-bold text-gray-800 dark:text-gray-200">{formatNumber(episode.spotify)}</p>
         </div>
         <div className="card">
           <div className="flex items-center space-x-3 mb-2">
-            <BarChart3 className="w-5 h-5 text-primary-600" />
-            <h4 className="font-semibold text-gray-700">Day 90</h4>
+            <BarChart3 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300">Day 90</h4>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{formatNumber(episode.day90)}</p>
+          <p className="text-3xl font-bold text-gray-800 dark:text-gray-200">{formatNumber(episode.day90)}</p>
         </div>
         <div className="card">
           <div className="flex items-center space-x-3 mb-2">
-            <Calendar className="w-5 h-5 text-primary-600" />
-            <h4 className="font-semibold text-gray-700">Day 14</h4>
+            <Calendar className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <h4 className="font-semibold text-gray-700 dark:text-gray-300">Day 14</h4>
           </div>
-          <p className="text-3xl font-bold text-gray-800">{formatNumber(episode.day14)}</p>
+          <p className="text-3xl font-bold text-gray-800 dark:text-gray-200">{formatNumber(episode.day14)}</p>
         </div>
       </div>
     </div>

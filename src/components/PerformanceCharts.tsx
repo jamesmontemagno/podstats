@@ -103,21 +103,21 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
   return (
     <div className="space-y-6">
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Performance Analytics</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Performance Analytics</h2>
+        <p className="text-gray-600 dark:text-gray-400">
           Deep dive into podcast performance metrics, trends, and patterns.
         </p>
       </div>
 
       {/* Monthly Performance */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Monthly Performance Trend</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Monthly Performance Trend</h3>
         <ResponsiveContainer width="100%" height={350}>
           <AreaChart data={monthlyData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" angle={-45} textAnchor="end" height={80} />
-            <YAxis />
-            <Tooltip formatter={(value) => formatNumber(value as number)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="month" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Legend />
             <Area
               type="monotone"
@@ -141,12 +141,12 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
 
       {/* Performance Distribution */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Episode Performance Distribution</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Episode Performance Distribution</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={performanceDistribution}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="name" stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
             <Tooltip />
             <Legend />
             <Bar dataKey="count" name="Number of Episodes">
@@ -156,52 +156,55 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <p>Distribution of episodes across different performance ranges (all-time listens)</p>
         </div>
       </div>
 
       {/* Retention Analysis */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Retention Analysis (Recent 50 Episodes)</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Retention Analysis (Recent 50 Episodes)</h3>
         <ResponsiveContainer width="100%" height={350}>
           <LineChart data={retentionData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-            <YAxis label={{ value: 'Percentage of All-Time', angle: -90, position: 'insideLeft' }} />
-            <Tooltip formatter={(value) => `${(value as number).toFixed(1)}%`} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis label={{ value: 'Percentage of All-Time', angle: -90, position: 'insideLeft' }} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <Tooltip formatter={(value) => `${(value as number).toFixed(1)}%`} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Legend />
             <Line type="monotone" dataKey="day1Percent" stroke="#ef4444" name="Day 1 %" strokeWidth={2} />
             <Line type="monotone" dataKey="day7Percent" stroke="#f59e0b" name="Day 7 %" strokeWidth={2} />
             <Line type="monotone" dataKey="day30Percent" stroke="#10b981" name="Day 30 %" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <p>Shows what percentage of all-time listens occur in the first day, week, and month</p>
         </div>
       </div>
 
       {/* Day 1 vs All-Time Correlation */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Day 1 vs All-Time Listens Correlation</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Day 1 vs All-Time Listens Correlation</h3>
         <ResponsiveContainer width="100%" height={400}>
           <ScatterChart>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
             <XAxis
               type="number"
               dataKey="day1"
               name="Day 1"
               label={{ value: 'Day 1 Listens', position: 'insideBottom', offset: -5 }}
+              stroke="currentColor" className="text-gray-600 dark:text-gray-400"
             />
             <YAxis
               type="number"
               dataKey="allTime"
               name="All-Time"
               label={{ value: 'All-Time Listens', angle: -90, position: 'insideLeft' }}
+              stroke="currentColor" className="text-gray-600 dark:text-gray-400"
             />
             <Tooltip
               cursor={{ strokeDasharray: '3 3' }}
               formatter={(value) => formatNumber(value as number)}
+              contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }}
             />
             <Scatter name="Episodes" data={day1VsAllTime} fill="#0ea5e9">
               {day1VsAllTime.map((_entry, index) => (
@@ -210,27 +213,27 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             </Scatter>
           </ScatterChart>
         </ResponsiveContainer>
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <p>Correlation between first-day performance and total lifetime listens</p>
         </div>
       </div>
 
       {/* Growth Trend */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Recent 100 Episodes Performance</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent 100 Episodes Performance</h3>
         <ResponsiveContainer width="100%" height={350}>
           <LineChart data={growthTrend}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="episode" label={{ value: 'Episode Number', position: 'insideBottom', offset: -5 }} />
-            <YAxis />
-            <Tooltip formatter={(value) => formatNumber(value as number)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="episode" label={{ value: 'Episode Number', position: 'insideBottom', offset: -5 }} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Legend />
             <Line type="monotone" dataKey="allTime" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
             <Line type="monotone" dataKey="day30" stroke="#10b981" strokeWidth={2} name="Day 30" />
             <Line type="monotone" dataKey="day7" stroke="#f59e0b" strokeWidth={2} name="Day 7" />
           </LineChart>
         </ResponsiveContainer>
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           <p>Performance trend across the most recent 100 episodes</p>
         </div>
       </div>
