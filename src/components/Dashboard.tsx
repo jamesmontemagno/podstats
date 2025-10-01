@@ -120,33 +120,33 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
       {/* Performance Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Day 1 Average</h3>
-          <p className="text-3xl font-bold text-primary-600">{formatNumber(stats.avgDay1)}</p>
-          <p className="text-sm text-gray-500 mt-1">First day listens</p>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Day 1 Average</h3>
+          <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatNumber(stats.avgDay1)}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">First day listens</p>
         </div>
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Day 7 Average</h3>
-          <p className="text-3xl font-bold text-primary-600">{formatNumber(stats.avgDay7)}</p>
-          <p className="text-sm text-gray-500 mt-1">First week listens</p>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Day 7 Average</h3>
+          <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatNumber(stats.avgDay7)}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">First week listens</p>
         </div>
         <div className="card">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Retention Rate</h3>
-          <p className="text-3xl font-bold text-primary-600">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Retention Rate</h3>
+          <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">
             {((stats.avgDay7 / stats.avgAllTime) * 100).toFixed(1)}%
           </p>
-          <p className="text-sm text-gray-500 mt-1">Week 1 to all-time</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Week 1 to all-time</p>
         </div>
       </div>
 
       {/* Timeline Chart */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Recent Performance Timeline</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent Performance Timeline</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={timelineData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-            <YAxis />
-            <Tooltip formatter={(value) => formatNumber(value as number)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
+            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Line type="monotone" dataKey="listens" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
             <Line type="monotone" dataKey="day7" stroke="#10b981" strokeWidth={2} name="Day 7" />
           </LineChart>
@@ -155,13 +155,13 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
 
       {/* Top Episodes */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Top 10 Episodes by All-Time Listens</h3>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Top 10 Episodes by All-Time Listens</h3>
         <div className="space-y-3">
           {topEpisodes.map((episode, index) => (
             <div
               key={episode.slug}
               onClick={() => onEpisodeClick(episode)}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-primary-50 cursor-pointer transition-colors"
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer transition-colors"
             >
               <div className="flex items-center space-x-4 flex-1">
                 <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
@@ -170,13 +170,13 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
                   {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 truncate">{episode.title}</p>
-                  <p className="text-sm text-gray-500">{formatDate(episode.published)}</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{episode.title}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(episode.published)}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-primary-600">{formatNumber(episode.allTime)}</p>
-                <p className="text-xs text-gray-500">listens</p>
+                <p className="text-lg font-bold text-primary-600 dark:text-primary-400">{formatNumber(episode.allTime)}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">listens</p>
               </div>
             </div>
           ))}

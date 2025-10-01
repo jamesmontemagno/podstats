@@ -55,14 +55,14 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
     <div className="space-y-6">
       {/* Header */}
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Topic Analysis</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Topic Analysis</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           Explore topics discussed across {episodes.length} episodes. Topics are automatically extracted from episode titles.
         </p>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
           <input
             type="text"
             placeholder="Search topics..."
@@ -75,8 +75,8 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
 
       {/* Topic Cloud */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center space-x-2">
-          <Tag className="w-6 h-6 text-primary-600" />
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+          <Tag className="w-6 h-6 text-primary-600 dark:text-primary-400" />
           <span>Topic Cloud</span>
         </h3>
         <div className="flex flex-wrap gap-3">
@@ -90,8 +90,8 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
                 onClick={() => setSelectedTopic(topic.topic)}
                 className={`px-4 py-2 rounded-full font-semibold transition-all transform hover:scale-110 ${
                   selectedTopic === topic.topic
-                    ? 'bg-primary-600 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-primary-600 dark:bg-primary-500 text-white shadow-lg'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
                 style={{ fontSize }}
               >
@@ -104,19 +104,19 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
 
       {/* Top Topics Table */}
       <div className="card">
-        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center space-x-2">
-          <BarChart3 className="w-6 h-6 text-primary-600" />
+        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
+          <BarChart3 className="w-6 h-6 text-primary-600 dark:text-primary-400" />
           <span>Top Topics by Total Listens</span>
         </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead>
-              <tr className="border-b-2 border-gray-200">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Rank</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Topic</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Episodes</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total Listens</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Avg per Episode</th>
+              <tr className="border-b-2 border-gray-200 dark:border-gray-700">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Rank</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Topic</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Episodes</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Total Listens</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Avg per Episode</th>
               </tr>
             </thead>
             <tbody>
@@ -124,7 +124,7 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
                 <tr
                   key={topic.topic}
                   onClick={() => setSelectedTopic(topic.topic)}
-                  className="border-b border-gray-100 hover:bg-primary-50 cursor-pointer transition-colors"
+                  className="border-b border-gray-100 dark:border-gray-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer transition-colors"
                 >
                   <td className="px-4 py-3">
                     <div className={`w-8 h-8 rounded-full ${getTopicColor(index)} flex items-center justify-center text-white font-bold text-sm`}>
@@ -132,13 +132,13 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-semibold text-gray-800">{topic.topic}</span>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{topic.topic}</span>
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600">{topic.count}</td>
-                  <td className="px-4 py-3 text-right font-semibold text-primary-600">
+                  <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-400">{topic.count}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-primary-600 dark:text-primary-400">
                     {formatNumber(topic.totalListens)}
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600">
+                  <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
                     {formatNumber(topic.avgListens)}
                   </td>
                 </tr>
