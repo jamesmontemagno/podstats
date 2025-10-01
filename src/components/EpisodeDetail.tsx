@@ -2,6 +2,7 @@ import { ArrowLeft, Calendar, TrendingUp, Award, BarChart3 } from 'lucide-react'
 import { Episode } from '../types';
 import { formatNumber, formatDate, getEpisodePerformance, calculateRetention } from '../utils';
 import { useMemo } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   LineChart,
   Line,
@@ -22,6 +23,9 @@ interface EpisodeDetailProps {
 }
 
 export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDetailProps) {
+  const { effectiveTheme } = useTheme();
+  const isDark = effectiveTheme === 'dark';
+  
   const avgAllTime = useMemo(() => {
     return episodes.reduce((sum, ep) => sum + ep.allTime, 0) / episodes.length;
   }, [episodes]);
@@ -134,7 +138,7 @@ export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDeta
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
             <XAxis dataKey="name" stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
             <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }} />
             <Bar dataKey="listens" fill="#0ea5e9" />
           </BarChart>
         </ResponsiveContainer>
@@ -168,7 +172,7 @@ export default function EpisodeDetail({ episode, episodes, onBack }: EpisodeDeta
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
               <XAxis dataKey="name" stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
               <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-              <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
+              <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }} />
               <Legend />
               <Line type="monotone" dataKey="allTime" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
               <Line type="monotone" dataKey="day7" stroke="#10b981" strokeWidth={2} name="Day 7" />
