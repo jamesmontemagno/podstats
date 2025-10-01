@@ -66,35 +66,31 @@ export const extractTopics = (episodes: Episode[]): Map<string, Episode[]> => {
   const topics = new Map<string, Episode[]>();
   
   // Tech topics organized by priority (more specific topics first)
-  // Higher priority topics should be matched first to avoid generic matches
-  const keywordsByPriority = [
+  // Higher priority keywords are matched first to ensure specific matches take precedence
+  const keywords = [
     // Multi-word specific terms (highest priority)
-    { keywords: ['Machine Learning', 'ChatGPT', 'GitHub Copilot', 'VS Code', 'GitHub Actions', 'CI/CD', 'GitHub Spark'], priority: 1 },
+    'Machine Learning', 'ChatGPT', 'GitHub Copilot', 'VS Code', 'GitHub Actions', 'CI/CD', 'GitHub Spark',
     // Platform-specific and branded terms
-    { keywords: ['visionOS', 'watchOS', 'tvOS', 'macOS', 'iOS', 'Android', 'PlayStation', 'Xbox'], priority: 2 },
+    'visionOS', 'watchOS', 'tvOS', 'macOS', 'iOS', 'Android', 'PlayStation', 'Xbox',
     // Technology names and frameworks
-    { keywords: ['.NET MAUI', 'MAUI', '.NET', 'Blazor', 'React', 'Swift', 'Kotlin', 'C#', 'GraphQL', 'Docker', 'Kubernetes'], priority: 3 },
+    '.NET MAUI', 'MAUI', '.NET', 'Blazor', 'React', 'Swift', 'Kotlin', 'C#', 'GraphQL', 'Docker', 'Kubernetes',
     // Services and platforms
-    { keywords: ['Azure', 'AWS', 'OpenAI', 'GitHub', 'Xcode', 'Copilot'], priority: 4 },
+    'Azure', 'AWS', 'OpenAI', 'GitHub', 'Xcode', 'Copilot',
     // Companies (medium priority)
-    { keywords: ['Apple', 'Microsoft', 'Google', 'Meta', 'Nintendo'], priority: 5 },
+    'Apple', 'Microsoft', 'Google', 'Meta', 'Nintendo',
     // Tech concepts (lower priority)
-    { keywords: ['AI', 'ML', 'VR', 'AR', 'XR', 'API', 'REST', 'SQL'], priority: 6 },
+    'AI', 'ML', 'VR', 'AR', 'XR', 'API', 'REST', 'SQL',
     // General categories (lowest priority - only if no specific match)
-    { keywords: ['Mobile', 'Web', 'Desktop', 'Cloud', 'Security', 'Database', 'DevOps'], priority: 7 },
+    'Mobile', 'Web', 'Desktop', 'Cloud', 'Security', 'Database', 'DevOps',
   ];
-
-  // Flatten keywords while maintaining priority info
-  const allKeywords = keywordsByPriority.flatMap(group => 
-    group.keywords.map(keyword => ({ keyword, priority: group.priority }))
-  );
 
   episodes.forEach(episode => {
     const title = episode.title;
-    const matchedTopics = new Set<string>();
+    const matchedTopics: string[] = [];
     
     // Match keywords with word boundary awareness
-    allKeywords.forEach(({ keyword }) => {
+    // Process in order so higher priority keywords are matched first
+    for (const keyword of keywords) {
       // Create a regex pattern that matches the keyword with word boundaries
       // Handle special cases for keywords with dots or special characters
       let pattern: RegExp;
@@ -111,34 +107,40 @@ export const extractTopics = (episodes: Episode[]): Map<string, Episode[]> => {
       }
       
       if (pattern.test(title)) {
-        // Check if we already have a higher priority match that would be redundant
+        const keywordLower = keyword.toLowerCase();
+        
+        // Check if we already have a match that would be redundant
         // For example, if we matched ".NET MAUI", don't also match "MAUI" or ".NET"
-        const shouldAdd = !Array.from(matchedTopics).some(existing => {
-          // If current keyword is contained in an existing higher-priority match, skip it
-          if (existing.toLowerCase().includes(keyword.toLowerCase()) && existing !== keyword) {
-            return true;
+        const hasContainingMatch = matchedTopics.some(existing => 
+          existing.toLowerCase().includes(keywordLower) && existing !== keyword
+        );
+        
+        if (!hasContainingMatch) {
+          // Remove any existing matches that are contained in the current keyword
+          const indexesToRemove: number[] = [];
+          matchedTopics.forEach((existing, index) => {
+            if (keywordLower.includes(existing.toLowerCase()) && keyword !== existing) {
+              indexesToRemove.push(index);
+            }
+          });
+          
+          // Remove in reverse order to maintain indices
+          for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+            matchedTopics.splice(indexesToRemove[i], 1);
           }
-          // If existing keyword is contained in current and current has higher priority, replace it
-          if (keyword.toLowerCase().includes(existing.toLowerCase()) && keyword !== existing) {
-            matchedTopics.delete(existing);
-            return false;
-          }
-          return false;
-        });
-
-        if (shouldAdd) {
-          matchedTopics.add(keyword);
+          
+          matchedTopics.push(keyword);
         }
       }
-    });
+    }
 
     // Add episode to all matched topics
-    matchedTopics.forEach(topic => {
+    for (const topic of matchedTopics) {
       if (!topics.has(topic)) {
         topics.set(topic, []);
       }
       topics.get(topic)!.push(episode);
-    });
+    }
   });
 
   return topics;
