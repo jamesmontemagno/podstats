@@ -60,10 +60,10 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
   const getPerformanceBadge = (episode: Episode) => {
     const performance = getEpisodePerformance(episode, avgAllTime);
     const badges = {
-      'excellent': 'bg-green-100 text-green-800',
-      'good': 'bg-blue-100 text-blue-800',
-      'average': 'bg-gray-100 text-gray-800',
-      'below-average': 'bg-orange-100 text-orange-800',
+      'excellent': 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200',
+      'good': 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200',
+      'average': 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+      'below-average': 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200',
     };
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-semibold ${badges[performance]}`}>
@@ -76,12 +76,12 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
     <div className="space-y-6">
       {/* Search and Filters */}
       <div className="card">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Search Episodes</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Search Episodes</h2>
         
         <div className="space-y-4">
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
             <input
               type="text"
               placeholder="Search by title or slug..."
@@ -94,7 +94,7 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Minimum Listens
               </label>
               <input
@@ -106,7 +106,7 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Maximum Listens
               </label>
               <input
@@ -169,7 +169,7 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
             </button>
           </div>
 
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Showing {filteredAndSortedEpisodes.length} of {episodes.length} episodes
           </p>
         </div>
@@ -186,37 +186,37 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0 pr-4">
                 <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="text-lg font-bold text-gray-800">{episode.title}</h3>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">{episode.title}</h3>
                   {getPerformanceBadge(episode)}
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
+                <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
                   <span className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
                     <span>{formatDate(episode.published)}</span>
                   </span>
                   <span>•</span>
-                  <span className="text-gray-600 font-mono">{episode.slug}</span>
+                  <span className="text-gray-600 dark:text-gray-400 font-mono">{episode.slug}</span>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
                   <div>
-                    <p className="text-gray-500">Day 1</p>
-                    <p className="font-semibold text-gray-800">{formatNumber(episode.day1)}</p>
+                    <p className="text-gray-500 dark:text-gray-400">Day 1</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-200">{formatNumber(episode.day1)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Day 7</p>
-                    <p className="font-semibold text-gray-800">{formatNumber(episode.day7)}</p>
+                    <p className="text-gray-500 dark:text-gray-400">Day 7</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-200">{formatNumber(episode.day7)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Day 30</p>
-                    <p className="font-semibold text-gray-800">{formatNumber(episode.day30)}</p>
+                    <p className="text-gray-500 dark:text-gray-400">Day 30</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-200">{formatNumber(episode.day30)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">Day 90</p>
-                    <p className="font-semibold text-gray-800">{formatNumber(episode.day90)}</p>
+                    <p className="text-gray-500 dark:text-gray-400">Day 90</p>
+                    <p className="font-semibold text-gray-800 dark:text-gray-200">{formatNumber(episode.day90)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-500">All-Time</p>
-                    <p className="font-bold text-primary-600">{formatNumber(episode.allTime)}</p>
+                    <p className="text-gray-500 dark:text-gray-400">All-Time</p>
+                    <p className="font-bold text-primary-600 dark:text-primary-400">{formatNumber(episode.allTime)}</p>
                   </div>
                 </div>
               </div>
