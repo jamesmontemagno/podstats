@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Episode } from '../types';
-import { formatNumber } from '../utils';
+import { formatNumber, getTooltipStyle } from '../utils';
 import { useTheme } from '../contexts/ThemeContext';
 import {
   LineChart,
@@ -120,7 +120,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
             <XAxis dataKey="month" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
             <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }} />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={getTooltipStyle(isDark)} />
             <Legend />
             <Area
               type="monotone"
@@ -172,7 +172,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
             <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
             <YAxis label={{ value: 'Percentage of All-Time', angle: -90, position: 'insideLeft' }} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-            <Tooltip formatter={(value) => `${(value as number).toFixed(1)}%`} contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }} />
+            <Tooltip formatter={(value) => `${(value as number).toFixed(1)}%`} contentStyle={getTooltipStyle(isDark)} />
             <Legend />
             <Line type="monotone" dataKey="day1Percent" stroke="#ef4444" name="Day 1 %" strokeWidth={2} />
             <Line type="monotone" dataKey="day7Percent" stroke="#f59e0b" name="Day 7 %" strokeWidth={2} />
@@ -207,7 +207,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             <Tooltip
               cursor={{ strokeDasharray: '3 3' }}
               formatter={(value) => formatNumber(value as number)}
-              contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }}
+              contentStyle={getTooltipStyle(isDark)}
             />
             <Scatter name="Episodes" data={day1VsAllTime} fill="#0ea5e9">
               {day1VsAllTime.map((_entry, index) => (
@@ -229,7 +229,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
             <XAxis dataKey="episode" label={{ value: 'Episode Number', position: 'insideBottom', offset: -5 }} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
             <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)', border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`, color: isDark ? '#f3f4f6' : '#111827' }} />
+            <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={getTooltipStyle(isDark)} />
             <Legend />
             <Line type="monotone" dataKey="allTime" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
             <Line type="monotone" dataKey="day30" stroke="#10b981" strokeWidth={2} name="Day 30" />

@@ -126,3 +126,11 @@ export const formatDate = (date: Date): string => {
     day: 'numeric' 
   }).format(date);
 };
+
+export const getTooltipStyle = (isDark: boolean): React.CSSProperties => {
+  return {
+    backgroundColor: isDark ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
+    color: isDark ? '#f3f4f6' : '#111827'
+  };
+};
