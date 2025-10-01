@@ -80,7 +80,7 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
           <span>Topic Cloud</span>
         </h3>
         <div className="flex flex-wrap gap-3">
-          {filteredTopics.slice(0, 50).map((topic, index) => {
+          {filteredTopics.slice(0, 50).map((topic) => {
             const size = Math.min(Math.max(topic.count / 2, 1), 4);
             const fontSize = `${0.875 + size * 0.25}rem`;
             

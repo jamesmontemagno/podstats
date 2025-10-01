@@ -150,7 +150,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
             <Tooltip />
             <Legend />
             <Bar dataKey="count" name="Number of Episodes">
-              {performanceDistribution.map((entry, index) => (
+              {performanceDistribution.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>
@@ -204,7 +204,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
               formatter={(value) => formatNumber(value as number)}
             />
             <Scatter name="Episodes" data={day1VsAllTime} fill="#0ea5e9">
-              {day1VsAllTime.map((entry, index) => (
+              {day1VsAllTime.map((_entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Scatter>

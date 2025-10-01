@@ -1,19 +1,14 @@
 import { useState, useMemo } from 'react';
 import { 
   BarChart, 
-  LineChart, 
-  PieChart, 
-  TrendingUp, 
-  TrendingDown, 
   Radio, 
   Calendar,
   Search,
   Tag,
-  Award,
   Activity
 } from 'lucide-react';
-import { loadEpisodes, extractTopics, formatNumber, formatDate } from './utils';
-import { Episode, TopicData } from './types';
+import { loadEpisodes } from './utils';
+import { Episode } from './types';
 import Dashboard from './components/Dashboard';
 import EpisodeList from './components/EpisodeList';
 import TopicAnalysis from './components/TopicAnalysis';

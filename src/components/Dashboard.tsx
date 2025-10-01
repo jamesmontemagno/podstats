@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Radio, Calendar, Headphones, Award } from 'lucide-react';
+import { TrendingUp, TrendingDown, Radio, Headphones, Award } from 'lucide-react';
 import { Episode } from '../types';
 import { formatNumber, formatDate } from '../utils';
 import { 
@@ -9,9 +9,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar
+  ResponsiveContainer
 } from 'recharts';
 
 interface DashboardProps {
