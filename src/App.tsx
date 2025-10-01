@@ -35,19 +35,22 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Radio className="w-8 h-8 text-primary-600 dark:text-primary-400" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Merge Conflict Analytics</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Podcast Performance Dashboard</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+              <Radio className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Merge Conflict Analytics</h1>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Podcast Performance Dashboard</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                 <Calendar className="w-4 h-4" />
                 <span>{episodes.length} Episodes</span>
+              </div>
+              <div className="flex sm:hidden items-center text-xs text-gray-600 dark:text-gray-400">
+                <span>{episodes.length}</span>
               </div>
               <ThemeToggle />
             </div>
@@ -56,52 +59,52 @@ function App() {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-[72px] z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-1 py-2">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-[60px] sm:top-[72px] z-40">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="flex space-x-1 py-2 overflow-x-auto">
             <button
               onClick={() => setCurrentView('dashboard')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 currentView === 'dashboard'
                   ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               <Activity className="w-4 h-4" />
-              <span>Dashboard</span>
+              <span className="hidden sm:inline">Dashboard</span>
             </button>
             <button
               onClick={() => setCurrentView('episodes')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 currentView === 'episodes'
                   ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               <Search className="w-4 h-4" />
-              <span>Episodes</span>
+              <span className="hidden sm:inline">Episodes</span>
             </button>
             <button
               onClick={() => setCurrentView('topics')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 currentView === 'topics'
                   ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               <Tag className="w-4 h-4" />
-              <span>Topics</span>
+              <span className="hidden sm:inline">Topics</span>
             </button>
             <button
               onClick={() => setCurrentView('charts')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 currentView === 'charts'
                   ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               <BarChart className="w-4 h-4" />
-              <span>Analytics</span>
+              <span className="hidden sm:inline">Analytics</span>
             </button>
           </div>
         </div>
