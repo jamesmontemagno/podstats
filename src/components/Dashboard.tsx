@@ -141,11 +141,11 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
       {/* Timeline Chart */}
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent Performance Timeline</h3>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={250} minWidth={0}>
           <LineChart data={timelineData}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(156, 163, 175, 0.3)" />
-            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
-            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" />
+            <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} stroke="currentColor" className="text-gray-600 dark:text-gray-400" fontSize={12} />
+            <YAxis stroke="currentColor" className="text-gray-600 dark:text-gray-400" fontSize={12} />
             <Tooltip formatter={(value) => formatNumber(value as number)} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e5e7eb' }} />
             <Line type="monotone" dataKey="listens" stroke="#0ea5e9" strokeWidth={2} name="All-Time" />
             <Line type="monotone" dataKey="day7" stroke="#10b981" strokeWidth={2} name="Day 7" />
@@ -163,19 +163,19 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
               onClick={() => onEpisodeClick(episode)}
               className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer transition-colors"
             >
-              <div className="flex items-center space-x-4 flex-1">
-                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${
+              <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                <div className={`flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-white text-sm ${
                   index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-600' : 'bg-gray-300'
                 }`}>
                   {index + 1}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-gray-800 dark:text-gray-200 truncate">{episode.title}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(episode.published)}</p>
+                  <p className="font-semibold text-gray-800 dark:text-gray-200 truncate text-sm sm:text-base">{episode.title}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{formatDate(episode.published)}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-primary-600 dark:text-primary-400">{formatNumber(episode.allTime)}</p>
+              <div className="text-right flex-shrink-0 ml-2">
+                <p className="text-base sm:text-lg font-bold text-primary-600 dark:text-primary-400">{formatNumber(episode.allTime)}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">listens</p>
               </div>
             </div>
@@ -189,27 +189,27 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-3">
-                <Award className="w-6 h-6" />
-                <h3 className="text-xl font-bold">Best Performing Episode</h3>
+                <Award className="w-5 h-5 sm:w-6 sm:h-6" />
+                <h3 className="text-lg sm:text-xl font-bold">Best Performing Episode</h3>
               </div>
-              <h4 className="text-2xl font-bold mb-2">{stats.topEpisode.title}</h4>
-              <p className="text-primary-100 mb-4">{formatDate(stats.topEpisode.published)}</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h4 className="text-xl sm:text-2xl font-bold mb-2">{stats.topEpisode.title}</h4>
+              <p className="text-primary-100 mb-4 text-sm sm:text-base">{formatDate(stats.topEpisode.published)}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                  <p className="text-primary-100 text-sm">Day 1</p>
-                  <p className="text-2xl font-bold">{formatNumber(stats.topEpisode.day1)}</p>
+                  <p className="text-primary-100 text-xs sm:text-sm">Day 1</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatNumber(stats.topEpisode.day1)}</p>
                 </div>
                 <div>
-                  <p className="text-primary-100 text-sm">Day 7</p>
-                  <p className="text-2xl font-bold">{formatNumber(stats.topEpisode.day7)}</p>
+                  <p className="text-primary-100 text-xs sm:text-sm">Day 7</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatNumber(stats.topEpisode.day7)}</p>
                 </div>
                 <div>
-                  <p className="text-primary-100 text-sm">Day 30</p>
-                  <p className="text-2xl font-bold">{formatNumber(stats.topEpisode.day30)}</p>
+                  <p className="text-primary-100 text-xs sm:text-sm">Day 30</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatNumber(stats.topEpisode.day30)}</p>
                 </div>
                 <div>
-                  <p className="text-primary-100 text-sm">All-Time</p>
-                  <p className="text-2xl font-bold">{formatNumber(stats.topEpisode.allTime)}</p>
+                  <p className="text-primary-100 text-xs sm:text-sm">All-Time</p>
+                  <p className="text-xl sm:text-2xl font-bold">{formatNumber(stats.topEpisode.allTime)}</p>
                 </div>
               </div>
             </div>

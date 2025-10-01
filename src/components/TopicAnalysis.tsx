@@ -76,19 +76,19 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
       {/* Topic Cloud */}
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
-          <Tag className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <Tag className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
           <span>Topic Cloud</span>
         </h3>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           {filteredTopics.slice(0, 50).map((topic) => {
             const size = Math.min(Math.max(topic.count / 2, 1), 4);
-            const fontSize = `${0.875 + size * 0.25}rem`;
+            const fontSize = `${0.75 + size * 0.15}rem`;
             
             return (
               <button
                 key={topic.topic}
                 onClick={() => setSelectedTopic(topic.topic)}
-                className={`px-4 py-2 rounded-full font-semibold transition-all transform hover:scale-110 ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold transition-all transform hover:scale-110 ${
                   selectedTopic === topic.topic
                     ? 'bg-primary-600 dark:bg-primary-500 text-white shadow-lg'
                     : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
@@ -105,18 +105,18 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
       {/* Top Topics Table */}
       <div className="card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6 flex items-center space-x-2">
-          <BarChart3 className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+          <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600 dark:text-primary-400" />
           <span>Top Topics by Total Listens</span>
         </h3>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-6 px-6 sm:mx-0 sm:px-0">
           <table className="min-w-full">
             <thead>
               <tr className="border-b-2 border-gray-200 dark:border-gray-700">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Rank</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Topic</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Episodes</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Total Listens</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700 dark:text-gray-300">Avg per Episode</th>
+                <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Rank</th>
+                <th className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Topic</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Episodes</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 hidden sm:table-cell">Total Listens</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">Avg</th>
               </tr>
             </thead>
             <tbody>
@@ -126,19 +126,19 @@ export default function TopicAnalysis({ episodes, onEpisodeClick }: TopicAnalysi
                   onClick={() => setSelectedTopic(topic.topic)}
                   className="border-b border-gray-100 dark:border-gray-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 cursor-pointer transition-colors"
                 >
-                  <td className="px-4 py-3">
-                    <div className={`w-8 h-8 rounded-full ${getTopicColor(index)} flex items-center justify-center text-white font-bold text-sm`}>
+                  <td className="px-2 sm:px-4 py-3">
+                    <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full ${getTopicColor(index)} flex items-center justify-center text-white font-bold text-xs sm:text-sm`}>
                       {index + 1}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="font-semibold text-gray-800 dark:text-gray-200">{topic.topic}</span>
+                  <td className="px-2 sm:px-4 py-3">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200 text-sm sm:text-base">{topic.topic}</span>
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-400">{topic.count}</td>
-                  <td className="px-4 py-3 text-right font-semibold text-primary-600 dark:text-primary-400">
+                  <td className="px-2 sm:px-4 py-3 text-right text-gray-600 dark:text-gray-400 text-sm sm:text-base">{topic.count}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right font-semibold text-primary-600 dark:text-primary-400 text-sm sm:text-base hidden sm:table-cell">
                     {formatNumber(topic.totalListens)}
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-400">
+                  <td className="px-2 sm:px-4 py-3 text-right text-gray-600 dark:text-gray-400 text-sm sm:text-base">
                     {formatNumber(topic.avgListens)}
                   </td>
                 </tr>

@@ -18,15 +18,15 @@ code {
 }
 
 .card {
-  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow;
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow;
 }
 
 .stat-card {
-  @apply bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-lg p-6 shadow-lg;
+  @apply bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-lg p-4 sm:p-6 shadow-lg;
 }
 
 .btn {
-  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  @apply px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 text-sm sm:text-base;
 }
 
 .btn-primary {
