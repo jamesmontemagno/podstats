@@ -5,7 +5,8 @@ import {
   Calendar,
   Search,
   Tag,
-  Activity
+  Activity,
+  FileText
 } from 'lucide-react';
 import { loadEpisodes } from './utils';
 import { Episode } from './types';
@@ -14,9 +15,10 @@ import EpisodeList from './components/EpisodeList';
 import TopicAnalysis from './components/TopicAnalysis';
 import PerformanceCharts from './components/PerformanceCharts';
 import EpisodeDetail from './components/EpisodeDetail';
+import BlogPost from './components/BlogPost';
 import ThemeToggle from './components/ThemeToggle';
 
-type View = 'dashboard' | 'episodes' | 'topics' | 'charts';
+type View = 'dashboard' | 'episodes' | 'topics' | 'charts' | 'blog';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -106,6 +108,17 @@ function App() {
               <BarChart className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
             </button>
+            <button
+              onClick={() => setCurrentView('blog')}
+              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
+                currentView === 'blog'
+                  ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span className="hidden sm:inline">Blog</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -124,6 +137,7 @@ function App() {
             {currentView === 'episodes' && <EpisodeList episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'topics' && <TopicAnalysis episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'charts' && <PerformanceCharts episodes={episodes} />}
+            {currentView === 'blog' && <BlogPost />}
           </>
         )}
       </main>
@@ -131,9 +145,38 @@ function App() {
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
-            Merge Conflict Podcast Analytics • Built with React + Vite + Recharts
-          </p>
+          <div className="text-center space-y-3">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Merge Conflict Podcast Analytics • Built with React + Vite + Recharts
+            </p>
+            <button
+              onClick={() => setCurrentView('blog')}
+              className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium inline-flex items-center space-x-1 hover:underline"
+            >
+              <FileText className="w-4 h-4" />
+              <span>How This Was Built</span>
+            </button>
+            <p className="text-gray-400 dark:text-gray-500 text-xs">
+              Built with{' '}
+              <a 
+                href="https://code.visualstudio.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+              >
+                VS Code
+              </a>
+              {' '}and{' '}
+              <a 
+                href="https://github.com/features/copilot" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+              >
+                GitHub Copilot
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
