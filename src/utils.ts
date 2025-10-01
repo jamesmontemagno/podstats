@@ -65,30 +65,82 @@ export const loadEpisodes = (): Episode[] => {
 export const extractTopics = (episodes: Episode[]): Map<string, Episode[]> => {
   const topics = new Map<string, Episode[]>();
   
-  // Common tech topics and keywords to extract
+  // Tech topics organized by priority (more specific topics first)
+  // Higher priority keywords are matched first to ensure specific matches take precedence
   const keywords = [
-    'AI', 'iOS', 'Android', 'macOS', 'Swift', 'Kotlin', 'C#', '.NET', 'MAUI',
-    'Blazor', 'React', 'Azure', 'GitHub', 'VS Code', 'Xcode', 'Apple', 'Microsoft',
-    'Google', 'Meta', 'Nintendo', 'Xbox', 'PlayStation', 'VR', 'AR', 'XR',
-    'GPT', 'ChatGPT', 'Copilot', 'OpenAI', 'Machine Learning', 'ML',
-    'Docker', 'Kubernetes', 'AWS', 'Cloud', 'API', 'REST', 'GraphQL',
-    'Testing', 'CI/CD', 'DevOps', 'Security', 'Database', 'SQL',
-    'Mobile', 'Web', 'Desktop', 'Watch', 'visionOS', 'watchOS', 'tvOS',
-    'App', 'Development', 'Coding', 'Programming', 'Debug', 'Build'
+    // Multi-word specific terms (highest priority)
+    'Machine Learning', 'ChatGPT', 'GitHub Copilot', 'VS Code', 'GitHub Actions', 'CI/CD', 'GitHub Spark',
+    // Platform-specific and branded terms
+    'visionOS', 'watchOS', 'tvOS', 'macOS', 'iOS', 'Android', 'PlayStation', 'Xbox',
+    // Technology names and frameworks
+    '.NET MAUI', 'MAUI', '.NET', 'Blazor', 'React', 'Swift', 'Kotlin', 'C#', 'GraphQL', 'Docker', 'Kubernetes',
+    // Services and platforms
+    'Azure', 'AWS', 'OpenAI', 'GitHub', 'Xcode', 'Copilot',
+    // Companies (medium priority)
+    'Apple', 'Microsoft', 'Google', 'Meta', 'Nintendo',
+    // Tech concepts (lower priority)
+    'AI', 'ML', 'VR', 'AR', 'XR', 'API', 'REST', 'SQL',
+    // General categories (lowest priority - only if no specific match)
+    'Mobile', 'Web', 'Desktop', 'Cloud', 'Security', 'Database', 'DevOps',
   ];
 
   episodes.forEach(episode => {
-    const title = episode.title.toLowerCase();
+    const title = episode.title;
+    const matchedTopics: string[] = [];
     
-    keywords.forEach(keyword => {
-      const lowerKeyword = keyword.toLowerCase();
-      if (title.includes(lowerKeyword)) {
-        if (!topics.has(keyword)) {
-          topics.set(keyword, []);
-        }
-        topics.get(keyword)!.push(episode);
+    // Match keywords with word boundary awareness
+    // Process in order so higher priority keywords are matched first
+    for (const keyword of keywords) {
+      // Create a regex pattern that matches the keyword with word boundaries
+      // Handle special cases for keywords with dots or special characters
+      let pattern: RegExp;
+      
+      if (keyword.includes('.') || keyword.includes('#')) {
+        // For keywords with special chars like .NET or C#, use lookahead/lookbehind
+        // to match non-alphanumeric boundaries
+        const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        pattern = new RegExp(`(?<![a-zA-Z0-9])${escapedKeyword}(?![a-zA-Z0-9])`, 'i');
+      } else {
+        // For regular keywords, use word boundaries
+        const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        pattern = new RegExp(`\\b${escapedKeyword}\\b`, 'i');
       }
-    });
+      
+      if (pattern.test(title)) {
+        const keywordLower = keyword.toLowerCase();
+        
+        // Check if we already have a match that would be redundant
+        // For example, if we matched ".NET MAUI", don't also match "MAUI" or ".NET"
+        const hasContainingMatch = matchedTopics.some(existing => 
+          existing.toLowerCase().includes(keywordLower) && existing !== keyword
+        );
+        
+        if (!hasContainingMatch) {
+          // Remove any existing matches that are contained in the current keyword
+          const indexesToRemove: number[] = [];
+          matchedTopics.forEach((existing, index) => {
+            if (keywordLower.includes(existing.toLowerCase()) && keyword !== existing) {
+              indexesToRemove.push(index);
+            }
+          });
+          
+          // Remove in reverse order to maintain indices
+          for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+            matchedTopics.splice(indexesToRemove[i], 1);
+          }
+          
+          matchedTopics.push(keyword);
+        }
+      }
+    }
+
+    // Add episode to all matched topics
+    for (const topic of matchedTopics) {
+      if (!topics.has(topic)) {
+        topics.set(topic, []);
+      }
+      topics.get(topic)!.push(episode);
+    }
   });
 
   return topics;
