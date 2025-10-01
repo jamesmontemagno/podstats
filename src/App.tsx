@@ -108,17 +108,6 @@ function App() {
               <BarChart className="w-4 h-4" />
               <span className="hidden sm:inline">Analytics</span>
             </button>
-            <button
-              onClick={() => setCurrentView('blog')}
-              className={`flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
-                currentView === 'blog'
-                  ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-              <span className="hidden sm:inline">Blog</span>
-            </button>
           </div>
         </div>
       </nav>
