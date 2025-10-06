@@ -1,5 +1,10 @@
-import { Episode } from './types';
+import { Episode, EpisodeParseResult, EpisodesState } from './types';
 import rawData from '../mergeconflict-metrics-20250930-2231.csv?raw';
+
+// Constants
+const STORAGE_KEY = 'podstats:episodesCsv';
+const STORAGE_METADATA_KEY = 'podstats:episodesMetadata';
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 const parseNumber = (value: string): number => {
   if (!value || value === '–' || value === '-') return 0;
@@ -32,34 +37,103 @@ const parseCSVLine = (line: string): string[] => {
   return result;
 };
 
-export const loadEpisodes = (): Episode[] => {
-  const lines = rawData.trim().split('\n');
-  const episodes: Episode[] = [];
+// Expected CSV header formats (accept both variations)
+const EXPECTED_HEADERS = [
+  'Slug,Title,Published,Day 1,Day 7,Day 14,Day 30,Day 90,Spotify,All Time',
+  'Slug,Title,Published,1 Day,7 Days,14 Days,30 Days,90 Days,Spotify,All Time'
+];
 
-  // Skip header row
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    const fields = parseCSVLine(line);
-    
-    if (fields.length >= 10) {
-      const [slug, title, published, day1, day7, day14, day30, day90, spotify, allTime] = fields;
-      
-      episodes.push({
-        slug: slug.trim(),
-        title: title.trim(),
-        published: parseDate(published),
-        day1: parseNumber(day1),
-        day7: parseNumber(day7),
-        day14: parseNumber(day14),
-        day30: parseNumber(day30),
-        day90: parseNumber(day90),
-        spotify: parseNumber(spotify),
-        allTime: parseNumber(allTime),
-      });
-    }
+export const parseEpisodesFromCsv = (csv: string): EpisodeParseResult => {
+  const lines = csv.trim().split('\n');
+  const episodes: Episode[] = [];
+  const warnings: string[] = [];
+  let skippedCount = 0;
+
+  if (lines.length === 0) {
+    warnings.push('CSV file is empty');
+    return { episodes, skippedCount, warnings };
   }
 
-  return episodes.sort((a, b) => b.published.getTime() - a.published.getTime());
+  // Validate header (accept both common formats)
+  const headerLine = lines[0].trim();
+  const normalizedHeader = headerLine.replace(/["]/g, '').trim();
+  
+  const headerMatches = EXPECTED_HEADERS.some(expected => 
+    normalizedHeader === expected.replace(/["]/g, '').trim()
+  );
+  
+  if (!headerMatches) {
+    warnings.push(`Header format not recognized. Expected one of: "${EXPECTED_HEADERS[0]}" or similar variations.`);
+  }
+
+  // Parse data rows
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue; // Skip empty lines
+    
+    const fields = parseCSVLine(line);
+    
+    if (fields.length < 10) {
+      skippedCount++;
+      if (import.meta.env.DEV) {
+        console.warn(`Skipped row ${i + 1}: insufficient columns (${fields.length}/10)`);
+      }
+      continue;
+    }
+
+    const [slug, title, published, day1, day7, day14, day30, day90, spotify, allTime] = fields;
+    
+    // Validate required fields
+    if (!slug || !title || !published) {
+      skippedCount++;
+      if (import.meta.env.DEV) {
+        console.warn(`Skipped row ${i + 1}: missing required fields (slug, title, or published)`);
+      }
+      continue;
+    }
+
+    // Parse date and validate
+    const parsedDate = parseDate(published);
+    if (isNaN(parsedDate.getTime())) {
+      skippedCount++;
+      if (import.meta.env.DEV) {
+        console.warn(`Skipped row ${i + 1}: invalid date "${published}"`);
+      }
+      continue;
+    }
+
+    episodes.push({
+      slug: slug.trim(),
+      title: title.trim(),
+      published: parsedDate,
+      day1: parseNumber(day1),
+      day7: parseNumber(day7),
+      day14: parseNumber(day14),
+      day30: parseNumber(day30),
+      day90: parseNumber(day90),
+      spotify: parseNumber(spotify),
+      allTime: parseNumber(allTime),
+    });
+  }
+
+  if (skippedCount > 0) {
+    warnings.push(`Skipped ${skippedCount} row(s) due to missing or invalid data`);
+  }
+
+  // Sort episodes descending by published date
+  episodes.sort((a, b) => b.published.getTime() - a.published.getTime());
+
+  return { episodes, skippedCount, warnings };
+};
+
+export const loadEpisodes = (): EpisodesState => {
+  const result = parseEpisodesFromCsv(rawData);
+  return {
+    episodes: result.episodes,
+    skippedCount: result.skippedCount,
+    warnings: result.warnings,
+    sourceLabel: 'Default Dataset',
+  };
 };
 
 export const extractTopics = (episodes: Episode[]): Map<string, Episode[]> => {
@@ -185,4 +259,57 @@ export const getTooltipStyle = (isDark: boolean): React.CSSProperties => {
     border: `1px solid ${isDark ? '#4b5563' : '#e5e7eb'}`,
     color: isDark ? '#f3f4f6' : '#111827'
   };
+};
+
+// Persistence helpers for localStorage
+export const saveCsvToStorage = (csv: string, metadata: { sourceLabel: string; timestamp: number }): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, csv);
+    localStorage.setItem(STORAGE_METADATA_KEY, JSON.stringify(metadata));
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to save CSV to storage:', error);
+    }
+    throw new Error('Failed to save data. Storage quota may be exceeded.');
+  }
+};
+
+export const loadCsvFromStorage = (): { csv: string; metadata: { sourceLabel: string; timestamp: number } } | null => {
+  try {
+    const csv = localStorage.getItem(STORAGE_KEY);
+    const metadataStr = localStorage.getItem(STORAGE_METADATA_KEY);
+    
+    if (!csv || !metadataStr) {
+      return null;
+    }
+    
+    const metadata = JSON.parse(metadataStr);
+    return { csv, metadata };
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to load CSV from storage:', error);
+    }
+    // Clear corrupted storage
+    clearCsvFromStorage();
+    return null;
+  }
+};
+
+export const clearCsvFromStorage = (): void => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_METADATA_KEY);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to clear CSV from storage:', error);
+    }
+  }
+};
+
+export const validateFileSize = (file: File): boolean => {
+  return file.size <= MAX_FILE_SIZE;
+};
+
+export const getMaxFileSizeMB = (): number => {
+  return MAX_FILE_SIZE / (1024 * 1024);
 };

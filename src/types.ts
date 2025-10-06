@@ -31,3 +31,17 @@ export interface TopicData {
   avgListens: number;
   episodes: Episode[];
 }
+
+export interface EpisodeParseResult {
+  episodes: Episode[];
+  skippedCount: number;
+  warnings: string[];
+}
+
+export interface EpisodesState {
+  episodes: Episode[];
+  skippedCount: number;
+  warnings: string[];
+  sourceLabel: string;
+  lastImportTimestamp?: number;
+}

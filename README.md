@@ -9,6 +9,7 @@ A beautiful, interactive analytics dashboard for the Merge Conflict podcast, sho
 - **Performance Timeline**: Visual representation of recent episode performance
 - **Top Episodes**: Ranked list of best-performing episodes
 - **Best Episode Highlight**: Detailed view of the highest-performing episode
+- **CSV Upload**: Upload your own podcast metrics CSV to analyze custom data (persists in browser storage)
 
 ### 🔍 Episode Search & Filter
 - **Full-text Search**: Find episodes by title or slug
@@ -107,9 +108,20 @@ The application expects a CSV file with the following columns:
 - `Slug`: Episode identifier
 - `Title`: Episode title
 - `Published`: Publication date (YYYY-MM-DD)
-- `1 Day`, `7 Days`, `14 Days`, `30 Days`, `90 Days`: Listen counts at various intervals
+- `Day 1` (or `1 Day`), `Day 7` (or `7 Days`), `Day 14` (or `14 Days`), `Day 30` (or `30 Days`), `Day 90` (or `90 Days`): Listen counts at various intervals
 - `Spotify`: Spotify-specific listens
 - `All Time`: Total listens
+
+### Uploading Custom Data
+
+You can upload your own CSV file directly in the dashboard:
+
+1. Click the **Dashboard** tab
+2. In the **Data Controls** section at the top, click **Choose File**
+3. Select your CSV file (max 5 MB)
+4. Click **Import**
+
+Your uploaded data will be saved in your browser's local storage and persist across page reloads. Click **Reset** to restore the default dataset.
 
 ## 🎨 Key Features for Podcast Creators
 
@@ -117,6 +129,7 @@ The application expects a CSV file with the following columns:
 2. **Topic Insights**: Discover which topics generate the most interest
 3. **Growth Monitoring**: Track your podcast's growth over time
 4. **Retention Analysis**: Understand listener behavior patterns
+5. **Custom Data Analysis**: Upload your own podcast metrics for personalized insights
 5. **Comparative Analysis**: See how episodes perform relative to each other
 6. **Search & Filter**: Quickly find specific episodes or performance ranges
 7. **Visual Analytics**: Beautiful charts and graphs for presentations

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   BarChart, 
   Radio, 
@@ -8,8 +8,8 @@ import {
   Activity,
   FileText
 } from 'lucide-react';
-import { loadEpisodes } from './utils';
-import { Episode } from './types';
+import { loadEpisodes, parseEpisodesFromCsv, saveCsvToStorage, loadCsvFromStorage, clearCsvFromStorage } from './utils';
+import { Episode, EpisodesState } from './types';
 import Dashboard from './components/Dashboard';
 import EpisodeList from './components/EpisodeList';
 import TopicAnalysis from './components/TopicAnalysis';
@@ -17,13 +17,78 @@ import PerformanceCharts from './components/PerformanceCharts';
 import EpisodeDetail from './components/EpisodeDetail';
 import BlogPost from './components/BlogPost';
 import ThemeToggle from './components/ThemeToggle';
+import DataControls from './components/DataControls';
 
 type View = 'dashboard' | 'episodes' | 'topics' | 'charts' | 'blog';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
-  const episodes = useMemo(() => loadEpisodes(), []);
+  const [episodesState, setEpisodesState] = useState<EpisodesState>(() => {
+    // Try to load from localStorage first
+    const stored = loadCsvFromStorage();
+    if (stored) {
+      try {
+        const result = parseEpisodesFromCsv(stored.csv);
+        return {
+          episodes: result.episodes,
+          skippedCount: result.skippedCount,
+          warnings: result.warnings,
+          sourceLabel: stored.metadata.sourceLabel,
+          lastImportTimestamp: stored.metadata.timestamp,
+        };
+      } catch (error) {
+        // If parsing fails, clear storage and fall back to default
+        clearCsvFromStorage();
+        if (import.meta.env.DEV) {
+          console.warn('Failed to parse stored CSV, falling back to default:', error);
+        }
+      }
+    }
+    // Fall back to default dataset
+    return loadEpisodes();
+  });
+
+  const episodes = episodesState.episodes;
+
+  // Reset selectedEpisode if it no longer exists in the current dataset
+  useEffect(() => {
+    if (selectedEpisode && !episodes.find(ep => ep.slug === selectedEpisode.slug)) {
+      setSelectedEpisode(null);
+    }
+  }, [episodes, selectedEpisode]);
+
+  const handleFileImport = async (file: File) => {
+    try {
+      const text = await file.text();
+      const result = parseEpisodesFromCsv(text);
+      
+      const newState: EpisodesState = {
+        episodes: result.episodes,
+        skippedCount: result.skippedCount,
+        warnings: result.warnings,
+        sourceLabel: file.name,
+        lastImportTimestamp: Date.now(),
+      };
+
+      // Save to localStorage
+      saveCsvToStorage(text, {
+        sourceLabel: file.name,
+        timestamp: newState.lastImportTimestamp!,
+      });
+
+      setEpisodesState(newState);
+      setSelectedEpisode(null);
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Failed to import CSV');
+    }
+  };
+
+  const handleReset = () => {
+    clearCsvFromStorage();
+    setEpisodesState(loadEpisodes());
+    setSelectedEpisode(null);
+  };
 
   const handleEpisodeClick = (episode: Episode) => {
     setSelectedEpisode(episode);
@@ -122,6 +187,14 @@ function App() {
           />
         ) : (
           <>
+            {/* Data Controls - shown on dashboard view */}
+            {currentView === 'dashboard' && (
+              <DataControls
+                episodesState={episodesState}
+                onImport={handleFileImport}
+                onReset={handleReset}
+              />
+            )}
             {currentView === 'dashboard' && <Dashboard episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'episodes' && <EpisodeList episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'topics' && <TopicAnalysis episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
