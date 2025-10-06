@@ -24,7 +24,13 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
       return;
     }
 
-    if (!file.name.toLowerCase().endsWith('.csv')) {
+    // Validate file type by extension and MIME type
+    const isCSV = file.name.toLowerCase().endsWith('.csv') || 
+                  file.type === 'text/csv' || 
+                  file.type === 'application/csv' ||
+                  file.type === 'text/plain';
+    
+    if (!isCSV) {
       setError('Please select a CSV file');
       setSelectedFile(null);
       return;

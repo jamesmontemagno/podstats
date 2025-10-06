@@ -74,7 +74,7 @@ function App() {
       // Save to localStorage
       saveCsvToStorage(text, {
         sourceLabel: file.name,
-        timestamp: newState.lastImportTimestamp!,
+        timestamp: newState.lastImportTimestamp || Date.now(),
       });
 
       setEpisodesState(newState);

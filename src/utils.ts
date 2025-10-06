@@ -83,8 +83,12 @@ export const parseEpisodesFromCsv = (csv: string): EpisodeParseResult => {
 
     const [slug, title, published, day1, day7, day14, day30, day90, spotify, allTime] = fields;
     
-    // Validate required fields
-    if (!slug || !title || !published) {
+    // Validate required fields (use trimmed values)
+    const trimmedSlug = slug?.trim();
+    const trimmedTitle = title?.trim();
+    const trimmedPublished = published?.trim();
+    
+    if (!trimmedSlug || !trimmedTitle || !trimmedPublished) {
       skippedCount++;
       if (import.meta.env.DEV) {
         console.warn(`Skipped row ${i + 1}: missing required fields (slug, title, or published)`);
@@ -93,18 +97,18 @@ export const parseEpisodesFromCsv = (csv: string): EpisodeParseResult => {
     }
 
     // Parse date and validate
-    const parsedDate = parseDate(published);
+    const parsedDate = parseDate(trimmedPublished);
     if (isNaN(parsedDate.getTime())) {
       skippedCount++;
       if (import.meta.env.DEV) {
-        console.warn(`Skipped row ${i + 1}: invalid date "${published}"`);
+        console.warn(`Skipped row ${i + 1}: invalid date "${trimmedPublished}"`);
       }
       continue;
     }
 
     episodes.push({
-      slug: slug.trim(),
-      title: title.trim(),
+      slug: trimmedSlug,
+      title: trimmedTitle,
       published: parsedDate,
       day1: parseNumber(day1),
       day7: parseNumber(day7),
@@ -284,6 +288,14 @@ export const loadCsvFromStorage = (): { csv: string; metadata: { sourceLabel: st
     }
     
     const metadata = JSON.parse(metadataStr);
+    
+    // Validate metadata structure
+    if (!metadata || typeof metadata !== 'object' || 
+        typeof metadata.sourceLabel !== 'string' || 
+        typeof metadata.timestamp !== 'number') {
+      throw new Error('Invalid metadata structure');
+    }
+    
     return { csv, metadata };
   } catch (error) {
     if (import.meta.env.DEV) {
