@@ -1,4 +1,4 @@
-# Merge Conflict Podcast Analytics
+# Merge Conflict Podcast Analytics!
 
 A beautiful, interactive analytics dashboard for the Merge Conflict podcast, showcasing episode performance metrics, trends, and insights.
 
