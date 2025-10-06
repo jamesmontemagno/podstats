@@ -8,8 +8,36 @@ interface EpisodeListProps {
   onEpisodeClick: (episode: Episode) => void;
 }
 
-type SortField = 'published' | 'allTime' | 'day1' | 'day7' | 'day30';
+type SortField = 'published' | 'allTime' | 'day1' | 'day7';
 type SortOrder = 'asc' | 'desc';
+
+  // Simple fuzzy search function
+  const fuzzyMatch = (text: string, searchTerm: string): boolean => {
+    if (!searchTerm.trim()) return true;
+    
+    const searchWords = searchTerm.toLowerCase().trim().split(/\s+/);
+    const textLower = text.toLowerCase();
+    
+    return searchWords.every(word => {
+      // Direct substring match gets priority
+      if (textLower.includes(word)) return true;
+      
+      // Fuzzy match: allow for typos by checking if most characters are present in order
+      let textIndex = 0;
+      let matchCount = 0;
+      
+      for (const char of word) {
+        const foundIndex = textLower.indexOf(char, textIndex);
+        if (foundIndex !== -1) {
+          textIndex = foundIndex + 1;
+          matchCount++;
+        }
+      }
+      
+      // Consider it a match if at least 70% of characters are found in order
+      return matchCount / word.length >= 0.7;
+    });
+  };
 
 export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,22 +52,22 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
 
   const filteredAndSortedEpisodes = useMemo(() => {
     let filtered = episodes.filter(ep => {
-      const matchesSearch = ep.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           ep.slug.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = fuzzyMatch(ep.title, searchTerm) || fuzzyMatch(ep.slug, searchTerm);
       const matchesMin = !minListens || ep.allTime >= parseInt(minListens);
       const matchesMax = !maxListens || ep.allTime <= parseInt(maxListens);
       return matchesSearch && matchesMin && matchesMax;
     });
 
     filtered.sort((a, b) => {
-      let aVal, bVal;
+      let aVal: number, bVal: number;
       
       if (sortField === 'published') {
         aVal = a.published.getTime();
         bVal = b.published.getTime();
       } else {
-        aVal = a[sortField];
-        bVal = b[sortField];
+        // TypeScript-safe property access
+        aVal = a[sortField as keyof Pick<Episode, 'allTime' | 'day1' | 'day7'>];
+        bVal = b[sortField as keyof Pick<Episode, 'allTime' | 'day1' | 'day7'>];
       }
 
       return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
@@ -84,7 +112,7 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search by title or slug..."
+              placeholder="Fuzzy search by title or slug..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input pl-10"
