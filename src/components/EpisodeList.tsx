@@ -8,7 +8,7 @@ interface EpisodeListProps {
   onEpisodeClick: (episode: Episode) => void;
 }
 
-type SortField = 'published' | 'allTime' | 'day1' | 'day7' | 'day30';
+type SortField = 'published' | 'allTime' | 'day1' | 'day7' | 'day30' | 'day90';
 type SortOrder = 'asc' | 'desc';
 
 export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListProps) {
@@ -164,6 +164,17 @@ export default function EpisodeList({ episodes, onEpisodeClick }: EpisodeListPro
             >
               <span>Day 1</span>
               {sortField === 'day1' && (
+                sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />
+              )}
+            </button>
+            <button
+              onClick={() => toggleSort('day90')}
+              className={`btn flex items-center space-x-2 ${
+                sortField === 'day90' ? 'btn-primary' : 'btn-secondary'
+              }`}
+            >
+              <span>Day 90</span>
+              {sortField === 'day90' && (
                 sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />
               )}
             </button>
