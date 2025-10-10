@@ -107,7 +107,7 @@ function App() {
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
               <Radio className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600 dark:text-primary-400 flex-shrink-0" />
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Merge Conflict Analytics</h1>
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Podstats</h1>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Podcast Performance Dashboard</p>
               </div>
             </div>
@@ -195,7 +195,7 @@ function App() {
                 onReset={handleReset}
               />
             )}
-            {currentView === 'dashboard' && <Dashboard episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
+            {currentView === 'dashboard' && <Dashboard episodes={episodes} episodesState={episodesState} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'episodes' && <EpisodeList episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'topics' && <TopicAnalysis episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'charts' && <PerformanceCharts episodes={episodes} />}
@@ -209,7 +209,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center space-y-3">
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Merge Conflict Podcast Analytics • Built with React + Vite + Recharts
+              Podstats • Built with React + Vite + Recharts
             </p>
             <button
               onClick={() => setCurrentView('blog')}

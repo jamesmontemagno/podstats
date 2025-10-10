@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { TrendingUp, TrendingDown, Radio, Headphones, Award } from 'lucide-react';
-import { Episode } from '../types';
+import { Episode, EpisodesState } from '../types';
 import { formatNumber, formatDate } from '../utils';
 import { 
   LineChart, 
@@ -14,10 +14,11 @@ import {
 
 interface DashboardProps {
   episodes: Episode[];
+  episodesState: EpisodesState;
   onEpisodeClick: (episode: Episode) => void;
 }
 
-export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) {
+export default function Dashboard({ episodes, episodesState, onEpisodeClick }: DashboardProps) {
   const stats = useMemo(() => {
     const totalListens = episodes.reduce((sum, ep) => sum + ep.allTime, 0);
     const avgDay1 = episodes.reduce((sum, ep) => sum + ep.day1, 0) / episodes.length;
@@ -43,7 +44,7 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
       oldAvg,
       growthRate
     };
-  }, [episodes]);
+  }, [episodes, episodesState.lastImportTimestamp, episodesState.sourceLabel]);
 
   const timelineData = useMemo(() => {
     return episodes
@@ -54,16 +55,22 @@ export default function Dashboard({ episodes, onEpisodeClick }: DashboardProps) 
         listens: ep.allTime,
         day7: ep.day7,
       }));
-  }, [episodes]);
+  }, [episodes, episodesState.lastImportTimestamp]);
 
   const topEpisodes = useMemo(() => {
     return [...episodes]
       .sort((a, b) => b.allTime - a.allTime)
       .slice(0, 10);
-  }, [episodes]);
+  }, [episodes, episodesState.lastImportTimestamp, episodesState.sourceLabel]);
 
   return (
     <div className="space-y-6">
+      {/* Debug Info - Data Source */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+        <div className="text-sm text-blue-800 dark:text-blue-300">
+          <strong>📊 Data Source:</strong> {episodesState.sourceLabel} • <strong>Episodes:</strong> {episodes.length} • <strong>Top Episode:</strong> {topEpisodes[0]?.title || 'None'}
+        </div>
+      </div>
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="stat-card">

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, RotateCcw, AlertCircle, CheckCircle, Info } from 'lucide-react';
+import { Upload, RotateCcw, AlertCircle, CheckCircle, Info, HelpCircle, X } from 'lucide-react';
 import { validateFileSize, getMaxFileSizeMB } from '../utils';
 import { EpisodesState } from '../types';
 
@@ -13,6 +13,7 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showFaq, setShowFaq] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +89,13 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
             Upload your own CSV file to analyze custom podcast metrics
           </p>
         </div>
+        <button
+          onClick={() => setShowFaq(true)}
+          className="flex items-center space-x-1 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-sm font-medium"
+        >
+          <HelpCircle className="w-4 h-4" />
+          <span>CSV Format</span>
+        </button>
       </div>
 
       {/* Status Summary */}
@@ -173,7 +181,7 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
                 <button
                   onClick={handleReset}
                   disabled={isProcessing}
-                  className="btn flex items-center space-x-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn btn-secondary flex items-center space-x-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Reset</span>
@@ -183,7 +191,12 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             <Info className="w-3 h-3 inline mr-1" />
-            Maximum file size: {maxSizeMB} MB. Format: Slug, Title, Published, Day 1, Day 7, Day 14, Day 30, Day 90, Spotify, All Time
+            Maximum file size: {maxSizeMB} MB. Default format from fireside.fm. <button
+              onClick={() => setShowFaq(true)}
+              className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
+            >
+              See format details
+            </button>
           </p>
         </div>
 
@@ -199,6 +212,69 @@ export default function DataControls({ episodesState, onImport, onReset }: DataC
           </div>
         )}
       </div>
+
+      {/* FAQ Modal */}
+      {showFaq && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">CSV Format Guide</h3>
+              <button
+                onClick={() => setShowFaq(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Default Format (fireside.fm)</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  This tool uses the standard CSV export format from fireside.fm podcast hosting. The expected columns are:
+                </p>
+                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 text-sm font-mono overflow-x-auto">
+                  <div className="text-gray-800 dark:text-gray-200">
+                    Slug, Title, Published, Day 1, Day 7, Day 14, Day 30, Day 90, Spotify, All Time
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Column Descriptions</h4>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li><strong>Slug:</strong> Episode identifier (e.g., "episode-123")</li>
+                  <li><strong>Title:</strong> Episode title</li>
+                  <li><strong>Published:</strong> Publication date (YYYY-MM-DD format)</li>
+                  <li><strong>Day 1:</strong> Downloads in first 24 hours</li>
+                  <li><strong>Day 7:</strong> Downloads in first 7 days</li>
+                  <li><strong>Day 14:</strong> Downloads in first 14 days</li>
+                  <li><strong>Day 30:</strong> Downloads in first 30 days</li>
+                  <li><strong>Day 90:</strong> Downloads in first 90 days</li>
+                  <li><strong>Spotify:</strong> Spotify-specific downloads</li>
+                  <li><strong>All Time:</strong> Total downloads to date</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Alternative Formats</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  The parser also accepts alternative column names like "1 Day" instead of "Day 1", and will ignore extra columns. Missing columns will be filled with zeros.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">File Requirements</h4>
+                <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                  <li>• File must be in CSV format (.csv extension)</li>
+                  <li>• Maximum file size: {maxSizeMB} MB</li>
+                  <li>• First row should contain column headers</li>
+                  <li>• Numeric columns should contain numbers only (commas will be stripped)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
