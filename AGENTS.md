@@ -5,17 +5,19 @@
 ---
 ## 1. Project Purpose
 Interactive analytics dashboard for the **Merge Conflict** podcast:
-- Loads a static CSV of episode metrics at build/runtime (`mergeconflict-metrics-*.csv`) via Vite raw import.
+- Loads a static CSV of episode metrics at build/runtime (`mergeconflict-metrics-*.csv`) via Vite raw import or user-uploaded CSV.
+- Supports runtime CSV upload (≤5 MB) with localStorage persistence for analyzing custom podcast metrics.
 - Performs in‑browser parsing & enrichment (topic extraction, retention, performance classification).
 - Presents multi‑view UI (Dashboard, Episodes, Topics, Analytics, Blog) using React 18 + TypeScript + Tailwind + Recharts.
 
-No backend or persistence beyond `localStorage` (theme). All data transformations are pure and synchronous.
+No backend. Persistence uses `localStorage` for theme and uploaded CSV data. All data transformations are pure and synchronous.
 
 ---
 ## 2. High-Level Architecture
 ```
 index.html → main.tsx → <ThemeProvider><App/></ThemeProvider>
                                      │
+                                     ├── DataControls (CSV upload/reset)
                                      ├── Dashboard (aggregate KPIs + charts)
                                      ├── EpisodeList (search / filter / sort)
                                      ├── TopicAnalysis (keyword clustering)
@@ -24,12 +26,14 @@ index.html → main.tsx → <ThemeProvider><App/></ThemeProvider>
                                      └── BlogPost (build narrative / write-up)
 
 utils.ts
-  ├─ loadEpisodes(): CSV → Episode[] (sorted desc by published)
+  ├─ parseEpisodesFromCsv(): CSV → EpisodeParseResult (episodes + warnings)
+  ├─ loadEpisodes(): default CSV → EpisodesState
   ├─ extractTopics(): Episode[] → Map<Topic, Episode[]>
   ├─ calculateRetention(), getEpisodePerformance()
+  ├─ saveCsvToStorage(), loadCsvFromStorage(), clearCsvFromStorage()
   └─ formatting helpers (date, number, tooltip)
 
-types.ts: Domain types (Episode, MetricStats, TopicData)
+types.ts: Domain types (Episode, MetricStats, TopicData, EpisodeParseResult, EpisodesState)
 ThemeContext.tsx: stateful light/dark/system + effectiveTheme (html class)
 ```
 
@@ -109,9 +113,11 @@ Add a section to this file if you introduce formal CI.
 ## 10. CSV Schema Changes
 If the source CSV adds columns:
 - Extend `Episode` in `types.ts` (non-breaking by making field optional initially).
-- Update `loadEpisodes()` parse and push logic.
+- Update `parseEpisodesFromCsv()` parse logic.
 - Add formatting / classification only where needed; avoid scope creep in a single change.
 - Document new fields here.
+
+**CSV Upload Feature**: Users can now upload custom CSV files (≤5 MB) at runtime via the DataControls component. Uploaded data persists in localStorage and survives page reloads. The parser accepts both "Day 1" and "1 Day" header formats for flexibility.
 
 ---
 ## 11. Security & Privacy

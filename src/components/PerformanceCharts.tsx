@@ -113,7 +113,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
       </div>
 
       {/* Monthly Performance */}
-      <div className="card">
+      <div className="analytics-monthly-trends card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Monthly Performance Trend</h3>
         <ResponsiveContainer width="100%" height={300} minWidth={0}>
           <AreaChart data={monthlyData}>
@@ -143,7 +143,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
       </div>
 
       {/* Performance Distribution */}
-      <div className="card">
+      <div className="analytics-performance-distribution card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Episode Performance Distribution</h3>
         <ResponsiveContainer width="100%" height={250} minWidth={0}>
           <BarChart data={performanceDistribution}>
@@ -165,7 +165,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
       </div>
 
       {/* Retention Analysis */}
-      <div className="card">
+      <div className="analytics-retention card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Retention Analysis (Recent 50 Episodes)</h3>
         <ResponsiveContainer width="100%" height={300} minWidth={0}>
           <LineChart data={retentionData}>
@@ -185,7 +185,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
       </div>
 
       {/* Day 1 vs All-Time Correlation */}
-      <div className="card">
+      <div className="analytics-day7-scatter card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Day 1 vs All-Time Listens Correlation</h3>
         <ResponsiveContainer width="100%" height={350} minWidth={0}>
           <ScatterChart>
@@ -224,7 +224,7 @@ export default function PerformanceCharts({ episodes }: PerformanceChartsProps) 
       </div>
 
       {/* Growth Trend */}
-      <div className="card">
+      <div className="analytics-growth-patterns card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent 100 Episodes Performance</h3>
         <ResponsiveContainer width="100%" height={300} minWidth={0}>
           <LineChart data={growthTrend}>

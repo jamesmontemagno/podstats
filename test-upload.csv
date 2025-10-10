@@ -1,0 +1,4 @@
+Slug,Title,Published,Day 1,Day 7,Day 14,Day 30,Day 90,Spotify,All Time
+test-episode-1,"Test Episode 1",2024-01-01,1000,2000,3000,4000,5000,500,10000
+test-episode-2,"Test Episode 2",2024-01-02,2000,4000,6000,8000,10000,1000,20000
+test-episode-3,"Test Episode 3",2024-01-03,3000,6000,9000,12000,15000,1500,30000

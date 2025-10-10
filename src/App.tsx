@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   BarChart, 
   Radio, 
@@ -8,8 +8,8 @@ import {
   Activity,
   FileText
 } from 'lucide-react';
-import { loadEpisodes } from './utils';
-import { Episode } from './types';
+import { loadEpisodes, parseEpisodesFromCsv, saveCsvToStorage, loadCsvFromStorage, clearCsvFromStorage } from './utils';
+import { Episode, EpisodesState } from './types';
 import Dashboard from './components/Dashboard';
 import EpisodeList from './components/EpisodeList';
 import TopicAnalysis from './components/TopicAnalysis';
@@ -17,20 +17,92 @@ import PerformanceCharts from './components/PerformanceCharts';
 import EpisodeDetail from './components/EpisodeDetail';
 import BlogPost from './components/BlogPost';
 import ThemeToggle from './components/ThemeToggle';
+import DataControls from './components/DataControls';
 
 type View = 'dashboard' | 'episodes' | 'topics' | 'charts' | 'blog';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
-  const episodes = useMemo(() => loadEpisodes(), []);
+  const [episodesState, setEpisodesState] = useState<EpisodesState>(() => {
+    // Try to load from localStorage first
+    const stored = loadCsvFromStorage();
+    if (stored) {
+      try {
+        const result = parseEpisodesFromCsv(stored.csv);
+        return {
+          episodes: result.episodes,
+          skippedCount: result.skippedCount,
+          warnings: result.warnings,
+          sourceLabel: stored.metadata.sourceLabel,
+          lastImportTimestamp: stored.metadata.timestamp,
+        };
+      } catch (error) {
+        // If parsing fails, clear storage and fall back to default
+        clearCsvFromStorage();
+        if (import.meta.env.DEV) {
+          console.warn('Failed to parse stored CSV, falling back to default:', error);
+        }
+      }
+    }
+    // Fall back to default dataset
+    return loadEpisodes();
+  });
+
+  const episodes = episodesState.episodes;
+
+  // Scroll to top when view changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentView]);
+
+  // Reset selectedEpisode if it no longer exists in the current dataset
+  useEffect(() => {
+    if (selectedEpisode && !episodes.find(ep => ep.slug === selectedEpisode.slug)) {
+      setSelectedEpisode(null);
+    }
+  }, [episodes, selectedEpisode]);
+
+  const handleFileImport = async (file: File) => {
+    try {
+      const text = await file.text();
+      const result = parseEpisodesFromCsv(text);
+      
+      const newState: EpisodesState = {
+        episodes: result.episodes,
+        skippedCount: result.skippedCount,
+        warnings: result.warnings,
+        sourceLabel: file.name,
+        lastImportTimestamp: Date.now(),
+      };
+
+      // Save to localStorage
+      saveCsvToStorage(text, {
+        sourceLabel: file.name,
+        timestamp: newState.lastImportTimestamp || Date.now(),
+      });
+
+      setEpisodesState(newState);
+      setSelectedEpisode(null);
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Failed to import CSV');
+    }
+  };
+
+  const handleReset = () => {
+    clearCsvFromStorage();
+    setEpisodesState(loadEpisodes());
+    setSelectedEpisode(null);
+  };
 
   const handleEpisodeClick = (episode: Episode) => {
     setSelectedEpisode(episode);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToList = () => {
     setSelectedEpisode(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -42,7 +114,7 @@ function App() {
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
               <Radio className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600 dark:text-primary-400 flex-shrink-0" />
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Merge Conflict Analytics</h1>
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Podstats</h1>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Podcast Performance Dashboard</p>
               </div>
             </div>
@@ -122,11 +194,26 @@ function App() {
           />
         ) : (
           <>
-            {currentView === 'dashboard' && <Dashboard episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
+            {/* Data Controls - shown on dashboard view */}
+            {currentView === 'dashboard' && (
+              <DataControls
+                episodesState={episodesState}
+                onImport={handleFileImport}
+                onReset={handleReset}
+              />
+            )}
+            {currentView === 'dashboard' && <Dashboard episodes={episodes} episodesState={episodesState} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'episodes' && <EpisodeList episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'topics' && <TopicAnalysis episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'charts' && <PerformanceCharts episodes={episodes} />}
             {currentView === 'blog' && <BlogPost />}
+            
+            {/* Hidden PerformanceCharts for PDF export - always rendered but hidden when not on charts view */}
+            {currentView !== 'charts' && (
+              <div style={{ position: 'absolute', left: '-9999px', top: 0 }} aria-hidden="true">
+                <PerformanceCharts episodes={episodes} />
+              </div>
+            )}
           </>
         )}
       </main>
@@ -136,7 +223,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center space-y-3">
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Merge Conflict Podcast Analytics • Built with React + Vite + Recharts
+              Podstats • Built with React + Vite + Recharts
             </p>
             <button
               onClick={() => setCurrentView('blog')}
