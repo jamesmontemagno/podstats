@@ -51,6 +51,11 @@ function App() {
 
   const episodes = episodesState.episodes;
 
+  // Scroll to top when view changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentView]);
+
   // Reset selectedEpisode if it no longer exists in the current dataset
   useEffect(() => {
     if (selectedEpisode && !episodes.find(ep => ep.slug === selectedEpisode.slug)) {
@@ -92,10 +97,12 @@ function App() {
 
   const handleEpisodeClick = (episode: Episode) => {
     setSelectedEpisode(episode);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToList = () => {
     setSelectedEpisode(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -200,6 +207,13 @@ function App() {
             {currentView === 'topics' && <TopicAnalysis episodes={episodes} onEpisodeClick={handleEpisodeClick} />}
             {currentView === 'charts' && <PerformanceCharts episodes={episodes} />}
             {currentView === 'blog' && <BlogPost />}
+            
+            {/* Hidden PerformanceCharts for PDF export - always rendered but hidden when not on charts view */}
+            {currentView !== 'charts' && (
+              <div style={{ position: 'absolute', left: '-9999px', top: 0 }} aria-hidden="true">
+                <PerformanceCharts episodes={episodes} />
+              </div>
+            )}
           </>
         )}
       </main>

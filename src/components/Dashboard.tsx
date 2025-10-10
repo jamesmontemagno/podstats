@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Radio, Headphones, Award } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { TrendingUp, TrendingDown, Radio, Headphones, Award, Download } from 'lucide-react';
 import { Episode, EpisodesState } from '../types';
+import { generatePDFReport } from '../utils/pdfExport';
 import { formatNumber, formatDate } from '../utils';
 import { 
   LineChart, 
@@ -19,6 +20,21 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ episodes, episodesState, onEpisodeClick }: DashboardProps) {
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const handleExportPDF = async () => {
+    setIsExporting(true);
+    setExportError(null);
+    try {
+      await generatePDFReport(episodesState.sourceLabel);
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : 'Failed to export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const stats = useMemo(() => {
     const totalListens = episodes.reduce((sum, ep) => sum + ep.allTime, 0);
     const avgDay1 = episodes.reduce((sum, ep) => sum + ep.day1, 0) / episodes.length;
@@ -65,14 +81,30 @@ export default function Dashboard({ episodes, episodesState, onEpisodeClick }: D
 
   return (
     <div className="space-y-6">
-      {/* Debug Info - Data Source */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-        <div className="text-sm text-blue-800 dark:text-blue-300">
-          <strong>📊 Data Source:</strong> {episodesState.sourceLabel} • <strong>Episodes:</strong> {episodes.length} • <strong>Top Episode:</strong> {topEpisodes[0]?.title || 'None'}
+      {/* Export Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          <p><strong>� Export:</strong> Generate a comprehensive PDF report with all dashboard and analytics charts.</p>
         </div>
+        <button
+          onClick={handleExportPDF}
+          disabled={isExporting}
+          className="btn btn-primary flex items-center space-x-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Download className="w-4 h-4" />
+          <span>{isExporting ? 'Generating PDF...' : 'Export PDF Report'}</span>
+        </button>
       </div>
+
+      {/* Export Error */}
+      {exportError && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+          <p className="text-sm text-red-700 dark:text-red-400">{exportError}</p>
+        </div>
+      )}
+
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="dashboard-metrics grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="stat-card">
           <div className="flex items-center justify-between">
             <div>
@@ -125,7 +157,7 @@ export default function Dashboard({ episodes, episodesState, onEpisodeClick }: D
       </div>
 
       {/* Performance Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="dashboard-performance grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="card">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Day 1 Average</h3>
           <p className="text-3xl font-bold text-primary-600 dark:text-primary-400">{formatNumber(stats.avgDay1)}</p>
@@ -146,7 +178,7 @@ export default function Dashboard({ episodes, episodesState, onEpisodeClick }: D
       </div>
 
       {/* Timeline Chart */}
-      <div className="card">
+      <div className="dashboard-timeline card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Recent Performance Timeline</h3>
         <ResponsiveContainer width="100%" height={250} minWidth={0}>
           <LineChart data={timelineData}>
@@ -161,7 +193,7 @@ export default function Dashboard({ episodes, episodesState, onEpisodeClick }: D
       </div>
 
       {/* Top Episodes */}
-      <div className="card">
+      <div className="dashboard-top-episodes card">
         <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-6">Top 10 Episodes by All-Time Listens</h3>
         <div className="space-y-3">
           {topEpisodes.map((episode, index) => (
@@ -192,7 +224,7 @@ export default function Dashboard({ episodes, episodesState, onEpisodeClick }: D
 
       {/* Best Performing Episode Highlight */}
       {stats.topEpisode && (
-        <div className="card bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+        <div className="dashboard-best-episode card bg-gradient-to-r from-primary-500 to-primary-600 text-white">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-3">
